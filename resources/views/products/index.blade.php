@@ -5,6 +5,8 @@
 
 @section('content')
     <h1>hi</h1>
+    <h4>{{ auth()->user()->name }}</h4>
+    <h4>{{ request()->route == 'product.update' }}</h4>
     @dump($errors)
     <h1>create</h1>
     <form method="POST" action="{{ route('product.store') }}">

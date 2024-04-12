@@ -26,8 +26,12 @@ class ProductRequest extends FormRequest
     {
         $statuses = implode(',', array_column(ProductStatusEnum::cases(), 'value'));
 
+        $articleRule = [
+            (!auth()->user()->isAdmin() && request()->isMethod('put')) ? 'prohibited' : '',
+            'required', 'string', Rule::unique('products')->ignore($this->product)];
+
         return [
-            'article' => ['required', 'string', Rule::unique('products')->ignore($this->product)],
+            'article' => $articleRule,
             'name' => ['required', 'string', 'min:10'],
             'status' => ['required', "in:{$statuses}"],
             'data' => ['required', 'array'],
