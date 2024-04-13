@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Enums\ProductStatusEnum;
 use App\Http\Requests\ProductRequest;
+use App\Mail\ProductCreated;
 use App\Models\Product;
 use App\Http\Resources\ProductResource;
+use Illuminate\Support\Facades\Mail;
 
 class ProductController extends Controller
 {
@@ -26,7 +28,9 @@ class ProductController extends Controller
      */
     public function store(ProductRequest $request)
     {
-        Product::create($request->validated());
+        $product = Product::create($request->validated());
+
+        Mail::to(config('products.mail.email'))->queue(new ProductCreated($product));
 
         return redirect()->route('product.index')->withSuccess('Successfully created');
     }

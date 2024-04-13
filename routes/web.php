@@ -16,3 +16,9 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('product', ProductController::class);
 });
+
+Route::get('testmail', function(){
+    $product = App\Models\Product::first();
+
+    return new App\Mail\ProductCreated($product);
+});
