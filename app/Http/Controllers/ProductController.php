@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\ProductStatusEnum;
+use App\Enums\UserRoleEnum;
 use App\Http\Requests\ProductRequest;
 use App\Mail\ProductCreated;
 use App\Models\Product;
@@ -32,7 +33,7 @@ class ProductController extends Controller
 
         Mail::to(config('products.mail.email'))->queue(new ProductCreated($product));
 
-        return redirect()->route('product.index')->withSuccess('Successfully created');
+        return response()->json(['success'=> true]);
     }
 
     /**
@@ -51,9 +52,7 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        $statuses = ProductStatusEnum::cases();
 
-        return view('products.edit', compact('product', 'statuses'));
     }
 
     /**
@@ -61,9 +60,13 @@ class ProductController extends Controller
      */
     public function update(ProductRequest $request, Product $product)
     {
+        if (!auth()->user()->isAdmin() && $request->article != $product->article){
+
+            return response()->json(['success'=> false, 'msg'=> 'This user cannot edit article field!'], 422);
+        }
         $product->update($request->validated());
 
-        return redirect()->route('product.index');
+        return response()->json(['success'=> true]);
     }
 
     /**
@@ -73,6 +76,6 @@ class ProductController extends Controller
     {
         $product->delete();
 
-        return redirect()->route('product.index')->withSuccess('Successfully deleted');
+        return response()->json(['success'=> true]);
     }
 }
