@@ -4,4 +4,5 @@
 
 - ./vendor/bin/sail up
 - ./vendor/bin/sail php artisan migrate:fresh --seed
+- ./vendor/bin/sail npm install
 - ./vendor/bin/sail npm run dev
